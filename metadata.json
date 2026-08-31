@@ -1,0 +1,8 @@
+{
+  "name": "Roblox Voice Chat AI Backend",
+  "description": "Backend server and control dashboard for Roblox AI Character Voice Chat (VC) feature.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
