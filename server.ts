@@ -104,15 +104,15 @@ async function generatePublicAiResponse(
     ? systemInstruction.trim() 
     : `You are roleplaying as ${character} in Roblox. Speak in character directly to ${speaker}.`;
 
-  const mistralKey = process.env.MISTRAL_API_KEY || "";
+  const mistralKey = process.env.MISTRAL_API_KEY || "B4uCaEJo9ZCuZo5Am6BpAwt30lP86WMu";
 
-  // 1. Try Direct Mistral AI API with 2.5s timeout
+  // 1. Try Direct Mistral AI API with 3.5s timeout (Mistral Smartest Lightweight: mistral-small-latest / ministral-8b-latest)
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 2500);
+    const timeout = setTimeout(() => controller.abort(), 3500);
 
     const messagesPayload: Array<{ role: string; content: string }> = [
-      { role: "system", content: `${persona} Reply in 1 or 2 complete, natural sentences. Address ${speaker} directly. Always complete your words and sentences.` }
+      { role: "system", content: `${persona} Reply in 1 or 2 complete, natural, immersive sentences. Address ${speaker} directly. Speak strictly in persona.` }
     ];
 
     if (history && history.length > 0) {
@@ -132,8 +132,8 @@ async function generatePublicAiResponse(
       body: JSON.stringify({
         model: "mistral-small-latest",
         messages: messagesPayload,
-        temperature: 0.5,
-        max_tokens: 120
+        temperature: 0.6,
+        max_tokens: 150
       }),
       signal: controller.signal
     });
