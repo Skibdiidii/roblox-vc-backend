@@ -104,7 +104,7 @@ async function generatePublicAiResponse(
     ? systemInstruction.trim() 
     : `You are roleplaying as ${character} in Roblox. Speak in character directly to ${speaker}.`;
 
-  const mistralKey = process.env.MISTRAL_API_KEY || "B4uCaEJo9ZCuZo5Am6BpAwt30lP86WMu";
+  const mistralKey = process.env.MISTRAL_API_KEY || "";
 
   // 1. Try Direct Mistral AI API with 3.5s timeout (Mistral Smartest Lightweight: mistral-small-latest / ministral-8b-latest)
   try {

@@ -8,11 +8,15 @@ import { VoiceTester } from './components/VoiceTester';
 import { CharacterManager } from './components/CharacterManager';
 import { YouTubeMusicPlayer, YouTubeTrack } from './components/YouTubeMusicPlayer';
 import { ScriptVerificationModal } from './components/ScriptVerificationModal';
-import { Radio, Disc, Mic, Volume2 } from 'lucide-react';
+import { WhatsNewModal } from './components/WhatsNewModal';
 
 export default function App() {
   const [isVerified, setIsVerified] = useState<boolean>(() => {
     return localStorage.getItem('roblox_vc_script_verified') === 'true';
+  });
+
+  const [whatsNewOpen, setWhatsNewOpen] = useState<boolean>(() => {
+    return localStorage.getItem('roblox_vc_whats_new_v3_2') !== 'seen';
   });
 
   const [activeTab, setActiveTab] = useState<TabType>('feed');
@@ -25,8 +29,6 @@ export default function App() {
   const [autoPlayAudio, setAutoPlayAudio] = useState<boolean>(true);
   const [lastProcessedLogId, setLastProcessedLogId] = useState<string | null>(null);
 
-
-  // Background Music & Master Mixer
   const [bgMusicPlaying, setBgMusicPlaying] = useState<boolean>(false);
   const [bgMusicVolume, setBgMusicVolume] = useState<number>(0.3);
   const [ttsVolume, setTtsVolume] = useState<number>(1.0);
@@ -43,7 +45,6 @@ export default function App() {
   const ytIframeRef = useRef<HTMLIFrameElement | null>(null);
   const backendUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
 
-  // Sync iframe volume & play state
   useEffect(() => {
     if (ytIframeRef.current && ytIframeRef.current.contentWindow) {
       const vol = Math.round(bgMusicVolume * 100);
@@ -64,7 +65,6 @@ export default function App() {
           );
         }
       } catch {
-        // Handled silently
       }
     }
   }, [bgMusicPlaying, bgMusicVolume, currentTrack?.id]);
@@ -110,7 +110,6 @@ export default function App() {
         setHearLogs(data.hearLogs || []);
       }
     } catch {
-      // Handled silently
     }
   };
 
@@ -122,7 +121,6 @@ export default function App() {
         setStats(data);
       }
     } catch {
-      // Handled silently
     }
   };
 
@@ -134,7 +132,6 @@ export default function App() {
         setCharacters(data.characters || []);
       }
     } catch {
-      // Handled silently
     }
   };
 
@@ -157,7 +154,6 @@ export default function App() {
     audio.play().catch(fallbackSpeak);
   };
 
-  // Poll server state every 2 seconds
   useEffect(() => {
     fetchLogs();
     fetchHearLogs();
@@ -179,7 +175,6 @@ export default function App() {
       setLogs([]);
       fetchStats();
     } catch {
-      // Handled silently
     }
   };
 
@@ -189,7 +184,6 @@ export default function App() {
       setHearLogs([]);
       fetchStats();
     } catch {
-      // Handled silently
     }
   };
 
@@ -205,7 +199,6 @@ export default function App() {
         fetchStats();
       }
     } catch {
-      // Handled silently
     }
   };
 
@@ -219,31 +212,31 @@ export default function App() {
         fetchStats();
       }
     } catch {
-      // Handled silently
     }
+  };
+
+  const handleCloseWhatsNew = () => {
+    localStorage.setItem('roblox_vc_whats_new_v3_2', 'seen');
+    setWhatsNewOpen(false);
   };
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans selection:bg-emerald-500/30 selection:text-emerald-200">
-      {/* Top Studio Navbar */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         serverOnline={isOnline}
         activeRequestsCount={logs.length}
         uptimeSeconds={stats?.uptimeSeconds || 0}
+        onOpenWhatsNew={() => setWhatsNewOpen(true)}
       />
 
-      {/* Main Studio Canvas */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Telemetry Overview */}
         <StatsOverview stats={stats} isOnline={isOnline} />
 
-        {/* Tab View Routing */}
         {activeTab === 'feed' && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Spoken Audio Stream */}
               <LiveRequestLogs
                 logs={logs}
                 onClearLogs={handleClearLogs}
@@ -252,7 +245,6 @@ export default function App() {
                 setAutoPlayAudio={setAutoPlayAudio}
               />
 
-              {/* Heard VC Listener & Recognition */}
               <VcHearingFeed
                 hearLogs={hearLogs}
                 onClearHearLogs={handleClearHearLogs}
@@ -298,7 +290,6 @@ export default function App() {
         )}
       </main>
 
-      {/* Persistent Background Audio Stream IFrame (Hidden / Minimal) */}
       {currentTrack && (
         <div className="hidden">
           <iframe
@@ -311,15 +302,14 @@ export default function App() {
         </div>
       )}
 
-      {/* Studio Footer */}
       <footer className="border-t border-zinc-900 bg-zinc-950 py-4 mt-auto">
         <div className="max-w-7xl mx-auto px-4 text-center text-xs font-mono text-zinc-500">
           Roblox VC AI Studio Engine • Multi-Voice Acoustic Profiles • Real-time HTTP Stream on Port 3000
         </div>
       </footer>
 
-      {/* Script Verification Modal */}
       {!isVerified && <ScriptVerificationModal onVerified={() => setIsVerified(true)} />}
+      <WhatsNewModal isOpen={whatsNewOpen} onClose={handleCloseWhatsNew} />
     </div>
   );
 }

@@ -1,22 +1,7 @@
 export function getRobloxLuaScript(effectiveBackendUrl: string, speakEndpoint: string, secretKey: string, customDistance: number): string {
   const backendBase = effectiveBackendUrl.replace(/\/+$/, '');
-  return `-- ====================================================================
--- Roblox AI Character Mimic | Direct Intent Parser & InnerTube DJ
--- Universal Script for Delta, Fluxus, Solara, Wave, Xeno, Synapse X
--- Backend Base Endpoint: ${backendBase}
--- Features: Live Browser YouTube Music DJ, Natural Intent Parser,
---           AI System Action Prompting (executes implicit user requests),
---           Context-Aware Target Following (follows speaker or named targets),
---           Real Roblox Emote Dance (/e dance, /e dance2, /e dance3),
---           System Tips Broadcast Engine, Smart Chair Seating & Auto-Move,
---           Expanded Actions (Dance, Wave, Sleep, Spin, Jump, Follow),
---           DuckDuckGo Web Search, Screen Awareness & VC Bridge
--- ====================================================================
+  return `local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
--- Load Rayfield UI Library safely
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-
--- Services
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local TextChatService = game:GetService("TextChatService")
@@ -24,20 +9,16 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 local LocalPlayer = Players.LocalPlayer
 
--- API Configuration (Direct Mistral Integration)
 local MISTRAL_API_KEY = ""
 local MISTRAL_URL = "https://api.mistral.ai/v1/chat/completions"
 
--- Web Search API (DuckDuckGo Instant Answer API)
 local SEARCH_API_URL = "https://api.duckduckgo.com/?q=%s&format=json"
 
--- Web Backend Base & Endpoints
 local BACKEND_SPEAK_URL = "${speakEndpoint}"
 local BACKEND_MUSIC_PLAY_URL = "${backendBase}/api/music/play"
 local BACKEND_MUSIC_STOP_URL = "${backendBase}/api/music/stop"
 local PREMIUM_SECRET_KEY = "${secretKey}"
 
--- Predefined System Instructions Dictionary
 local characterPrompts = {
 	["John Doe"] = "You are John Doe, a mysterious dark Roblox void figure. Speak in very short, creepy, casual sentences. Never sound robotic.",
 	["Walter White"] = "You are Walter White. Speak sternly, naturally, and straight to the point like a normal person.",
@@ -48,7 +29,6 @@ local characterPrompts = {
 	["Batman"] = "You are Batman. Speak in short, dark, gravelly sentences."
 }
 
--- Helpful System Tips Collection
 local aiSystemTips = {
 	"[System Message] Did You Know the ai can Play Music? (Say 'play phonk', 'music plzzz fein', or 'put on carti'!)",
 	"[System Message] Did You Know the ai can Do Any Actions You Asked For, Example: 'Follow me' Or 'Jump'!",
@@ -64,7 +44,6 @@ local aiSystemTips = {
 	"[System Message] Did You Know you can ask the AI 'who created you' for a secret Easter Egg?"
 }
 
--- State Variables
 local selectedCharacter = "John Doe"
 local customSystemInstruction = characterPrompts["John Doe"]
 local chatRadius = ${customDistance}
@@ -86,7 +65,6 @@ local processedMessageHashes = {}
 local lastSafeCFrame = nil
 local lastTipIndex = 0
 
--- Universal HTTP Request Function (Delta, Fluxus, Wave compatible)
 local function sendHttpRequest(requestData)
 	local netRequest = (syn and syn.request) or (fluxus and fluxus.request) or request or http_request or (Delta and Delta.request)
 	if not netRequest then return nil end
@@ -95,7 +73,6 @@ local function sendHttpRequest(requestData)
 	return nil
 end
 
--- Deduplication Check
 local function isDuplicateMessage(speakerName, message)
 	if not speakerName or not message then return true end
 	local msgHash = speakerName .. ":" .. message
@@ -107,7 +84,6 @@ local function isDuplicateMessage(speakerName, message)
 	return false
 end
 
--- Distance Validator (Strictly <= chatRadius studs)
 local function isWithinRange(player)
 	if not player or player == LocalPlayer then return false end
 	if not player.Character or not LocalPlayer.Character then return false end
@@ -119,7 +95,6 @@ local function isWithinRange(player)
 	return false
 end
 
--- LIVE WEB SEARCH
 local function fetchWebSearch(query)
 	local formattedQuery = HttpService:UrlEncode(query)
 	local searchUrl = string.format(SEARCH_API_URL, formattedQuery)
@@ -138,7 +113,6 @@ local function fetchWebSearch(query)
 	return nil
 end
 
--- LIVE BROWSER MUSIC DJ CONTROLLER
 local function requestPlayMusicOnBrowser(songQuery, requestedByName)
 	if not songQuery or songQuery == "" then return end
 	task.spawn(function()
@@ -167,7 +141,6 @@ local function requestStopMusicOnBrowser(requestedByName)
 	end)
 end
 
--- Stop active dance animation if playing
 local function stopDanceAnimation()
 	if activeDanceTrack then
 		pcall(function()
@@ -178,7 +151,6 @@ local function stopDanceAnimation()
 	end
 end
 
--- Trigger real Roblox /e dance emote animations
 local function playRealRobloxDanceEmote()
 	local character = LocalPlayer.Character
 	if not character then return end
@@ -194,7 +166,6 @@ local function playRealRobloxDanceEmote()
 		animator.Parent = humanoid
 	end
 	
-	-- Check if Animate script has default emote animations
 	local animateScript = character:FindFirstChild("Animate")
 	local danceAnim = nil
 	if animateScript then
@@ -204,13 +175,12 @@ local function playRealRobloxDanceEmote()
 		end
 	end
 	
-	-- Fallback official Roblox Dance Emote IDs (R15 & R6 compatible)
 	local danceIds = {
-		"rbxassetid://507771019", -- R15 Dance 1
-		"rbxassetid://507771985", -- R15 Dance 2
-		"rbxassetid://507772104", -- R15 Dance 3
-		"rbxassetid://182435998", -- R6 Dance 1
-		"rbxassetid://182436842", -- R6 Dance 2
+		"rbxassetid://507771019",
+		"rbxassetid://507771985",
+		"rbxassetid://507772104",
+		"rbxassetid://182435998",
+		"rbxassetid://182436842",
 	}
 	
 	local chosenId = danceIds[math.random(1, #danceIds)]
@@ -227,7 +197,6 @@ local function playRealRobloxDanceEmote()
 	end)
 end
 
--- CHAIR FINDER & ACTION EXECUTOR
 local function executeAIAction(actionTag, player, targetPlayerOverride)
 	local character = LocalPlayer.Character
 	if not character or not character:FindFirstChild("Humanoid") then return end
@@ -330,7 +299,6 @@ local function executeAIAction(actionTag, player, targetPlayerOverride)
 	end
 end
 
--- Follow loop handler
 RunService.Heartbeat:Connect(function()
 	if followTargetEnabled and currentFollowTarget and currentFollowTarget.Character then
 		local myChar = LocalPlayer.Character
@@ -342,7 +310,6 @@ RunService.Heartbeat:Connect(function()
 	end
 end)
 
--- VOID SAFETY NET
 RunService.Heartbeat:Connect(function()
 	local char = LocalPlayer.Character
 	local root = char and char:FindFirstChild("HumanoidRootPart")
@@ -359,7 +326,6 @@ RunService.Heartbeat:Connect(function()
 	end
 end)
 
--- Gather player screen context
 local function getPlayerScreenContext(player)
 	local country = "Unknown Country"
 	local avatarInfo = "Standard Roblox Avatar"
@@ -383,7 +349,6 @@ local function getPlayerScreenContext(player)
 	return string.format("Live Screen View -> User: %s, Region: %s, Avatar: %s", player.Name, country, avatarInfo)
 end
 
--- Send to Web Backend
 local function sendToVCBackend(textToSpeak)
 	if not vcBridgeEnabled or not textToSpeak or textToSpeak == "" then return end
 	task.spawn(function()
@@ -400,7 +365,6 @@ local function sendToVCBackend(textToSpeak)
 	end)
 end
 
--- Universal Chat Sender
 local function sendTextChatServiceMessage(msg, isSystemTip)
 	if not msg or msg == "" then return end
 	
@@ -434,7 +398,6 @@ local function sendTextChatServiceMessage(msg, isSystemTip)
 	end
 end
 
--- Broadcast Next System Tip Function
 local function broadcastNextSystemTip()
 	if not systemTipsEnabled or #aiSystemTips == 0 then return end
 	lastTipIndex = (lastTipIndex % #aiSystemTips) + 1
@@ -443,9 +406,8 @@ local function broadcastNextSystemTip()
 	Rayfield:Notify({ Title = "💡 System Tip Sent", Content = tipMsg, Duration = 3 })
 end
 
--- Periodic System Tips Loop
 task.spawn(function()
-	task.wait(15) -- Initial delay after loading
+	task.wait(15)
 	while true do
 		if systemTipsEnabled then
 			broadcastNextSystemTip()
@@ -454,7 +416,6 @@ task.spawn(function()
 	end
 end)
 
--- Clean text output
 local function sanitizeOutput(text)
 	if not text then return "" end
 	text = string.gsub(text, "^[%d]+[%.%)]%s*", "")
@@ -467,10 +428,8 @@ local function sanitizeOutput(text)
 	return text
 end
 
--- FUZZY SONG QUERY EXTRACTOR
 local function extractSongQuery(lowerMsg, originalMsg)
-	-- If user specified format like play music (song) or play music [song] or play music "song"
-	local bracketMatch = string.match(originalMsg, "%((.-)%)") or string.match(originalMsg, "%[(.-)%]") or string.match(originalMsg, "\"([^\"]+)\")")
+	local bracketMatch = string.match(originalMsg, "%((.-)%)") or string.match(originalMsg, "%[(.-)%]") or string.match(originalMsg, "\"([^\"]+)\"")
 	if bracketMatch and bracketMatch ~= "" then
 		return bracketMatch
 	end
@@ -496,20 +455,17 @@ local function extractSongQuery(lowerMsg, originalMsg)
 	if cleaned ~= "" and cleaned ~= "music" and cleaned ~= "song" and #cleaned > 1 then
 		return cleaned
 	end
-	return "phonk remix" -- Default popular fallback when "play music" is said without specific song
+	return "phonk remix"
 end
 
--- NATURAL INTENT COMMAND PARSER (Fuzzy & Context Aware)
 local function parseIntentAndExecute(message, player)
 	local lowerMsg = string.lower(message)
 	
-	-- STOP / PAUSE MUSIC
 	if string.find(lowerMsg, "stop music") or string.find(lowerMsg, "pause music") or string.find(lowerMsg, "turn off music") or string.find(lowerMsg, "mute music") or string.find(lowerMsg, "end song") or string.find(lowerMsg, "stop song") then
 		requestStopMusicOnBrowser(player.Name)
 		return true
 	end
 	
-	-- MUSIC PLAY INTENT (Supports "play music (song)", "play music [song]", "play song phonk", etc.)
 	if string.find(lowerMsg, "music") or string.find(lowerMsg, "song") or string.find(lowerMsg, "play ") or string.find(lowerMsg, "put on ") or string.find(lowerMsg, "listen to ") or string.find(lowerMsg, "soundtrack") then
 		local songQuery = extractSongQuery(lowerMsg, message)
 		if songQuery then
@@ -519,13 +475,11 @@ local function parseIntentAndExecute(message, player)
 		end
 	end
 	
-	-- STOP / STAY / HALT
 	if string.find(lowerMsg, "stop") or string.find(lowerMsg, "stay here") or string.find(lowerMsg, "halt") or string.find(lowerMsg, "dont move") or string.find(lowerMsg, "stand still") or string.find(lowerMsg, "leave me") or string.find(lowerMsg, "quit following") then
 		executeAIAction("STOP", player)
 		return true
 	end
 	
-	-- TARGETED GO TO / FOLLOW ANOTHER PLAYER ("go to bacon and follow him", "follow bob", "walk to alice", "head to guest")
 	if string.find(lowerMsg, "go to ") or string.find(lowerMsg, "walk to ") or string.find(lowerMsg, "run to ") or string.find(lowerMsg, "head to ") or string.find(lowerMsg, "teleport to ") or string.find(lowerMsg, "find ") then
 		for _, otherPlayer in ipairs(Players:GetPlayers()) do
 			if otherPlayer ~= LocalPlayer then
@@ -540,7 +494,6 @@ local function parseIntentAndExecute(message, player)
 		end
 	end
 	
-	-- FOLLOW ME / COME HERE (Default to speaker if no other player named)
 	if string.find(lowerMsg, "follow") or string.find(lowerMsg, "come with me") or string.find(lowerMsg, "come here") or string.find(lowerMsg, "walk with me") or string.find(lowerMsg, "tag along") or string.find(lowerMsg, "pull up") or string.find(lowerMsg, "over here") or string.find(lowerMsg, "walk to me") then
 		for _, otherPlayer in ipairs(Players:GetPlayers()) do
 			if otherPlayer ~= LocalPlayer and otherPlayer ~= player then
@@ -553,66 +506,55 @@ local function parseIntentAndExecute(message, player)
 				end
 			end
 		end
-		-- If they say "follow him/her" or "follow them" or "follow me" without a distinct name, follow the speaker
 		executeAIAction("FOLLOW", player)
 		return true
 	end
 	
-	-- CHAIR / SEAT SITTING
 	if string.find(lowerMsg, "chair") or string.find(lowerMsg, "seat") or string.find(lowerMsg, "bench") or string.find(lowerMsg, "couch") or string.find(lowerMsg, "sofa") then
 		executeAIAction("SIT_CHAIR", player)
 		return true
 	end
 	
-	-- SITTING ON FLOOR
 	if string.find(lowerMsg, "sit down") or string.find(lowerMsg, "sit on floor") or string.find(lowerMsg, "sit") or string.find(lowerMsg, "take a seat") then
 		executeAIAction("SIT_FLOOR", player)
 		return true
 	end
 	
-	-- STAND UP
 	if string.find(lowerMsg, "stand up") or string.find(lowerMsg, "stand") or string.find(lowerMsg, "get up") or string.find(lowerMsg, "rise") then
 		executeAIAction("STAND", player)
 		return true
 	end
 	
-	-- JUMP / HOP / LEAP
 	if string.find(lowerMsg, "jump") or string.find(lowerMsg, "hop") or string.find(lowerMsg, "leap") or string.find(lowerMsg, "bounce") then
 		executeAIAction("JUMP", player)
 		return true
 	end
 	
-	-- DANCE (Real Roblox /e dance emote)
 	if string.find(lowerMsg, "dance") or string.find(lowerMsg, "bust a move") or string.find(lowerMsg, "boogie") or string.find(lowerMsg, "groove") or string.find(lowerMsg, "emoting") or string.find(lowerMsg, "emote") then
 		executeAIAction("DANCE", player)
 		return true
 	end
 	
-	-- SPIN / TWIRL / ROTATE
 	if string.find(lowerMsg, "spin") or string.find(lowerMsg, "twirl") or string.find(lowerMsg, "rotate") or string.find(lowerMsg, "turn around") or string.find(lowerMsg, "360") then
 		executeAIAction("SPIN", player)
 		return true
 	end
 	
-	-- WAVE / SAY HI
 	if string.find(lowerMsg, "wave") or string.find(lowerMsg, "say hi") or string.find(lowerMsg, "greet") then
 		executeAIAction("WAVE", player)
 		return true
 	end
 	
-	-- SLEEP / LAY DOWN / REST
 	if string.find(lowerMsg, "sleep") or string.find(lowerMsg, "lay down") or string.find(lowerMsg, "lie down") or string.find(lowerMsg, "take a nap") or string.find(lowerMsg, "bedtime") then
 		executeAIAction("SLEEP", player)
 		return true
 	end
 	
-	-- LOOK AT ME / FACE ME
 	if string.find(lowerMsg, "look at me") or string.find(lowerMsg, "face me") or string.find(lowerMsg, "look here") or string.find(lowerMsg, "turn to me") then
 		executeAIAction("LOOK_AT", player)
 		return true
 	end
 	
-	-- LAUGH / GIGGLE
 	if string.find(lowerMsg, "laugh") or string.find(lowerMsg, "giggle") or string.find(lowerMsg, "lol") or string.find(lowerMsg, "lmao") or string.find(lowerMsg, "haha") then
 		executeAIAction("LAUGH", player)
 		return true
@@ -621,7 +563,6 @@ local function parseIntentAndExecute(message, player)
 	return false
 end
 
--- Direct Mistral AI Generator
 local function generateAiResponse(speakerPlayer, heardMessage)
 	local speakerUserId = speakerPlayer.UserId
 	local speakerName = speakerPlayer.Name
@@ -629,13 +570,11 @@ local function generateAiResponse(speakerPlayer, heardMessage)
 	
 	local lowerMsg = string.lower(heardMessage)
 	
-	-- Creator Easter Egg
 	if string.find(lowerMsg, "created") or string.find(lowerMsg, "maker") or string.find(lowerMsg, "programmed") or string.find(lowerMsg, "who made") or string.find(lowerMsg, "who created") then
 		sendTextChatServiceMessage("i was created by loml a great person")
 		return
 	end
 	
-	-- Web Search Lookup
 	local webData = ""
 	if string.find(lowerMsg, "what") or string.find(lowerMsg, "who") or string.find(lowerMsg, "where") or string.find(lowerMsg, "when") or string.find(lowerMsg, "why") or string.find(lowerMsg, "how") then
 		local searchResult = fetchWebSearch(heardMessage)
@@ -719,7 +658,6 @@ CONVERSATION INSTRUCTIONS:
 	end)
 end
 
--- Chat Listener (With Intent Parser & Deduplication)
 local function onPlayerSpoke(player, message)
 	if not autoChatEnabled or player == LocalPlayer or not message or message == "" then return end
 	if not isWithinRange(player) then return end
@@ -727,10 +665,8 @@ local function onPlayerSpoke(player, message)
 	
 	Rayfield:Notify({ Title = "Heard " .. player.Name, Content = message, Duration = 2 })
 	
-	-- Instant Intent Check (Executes actions immediately without waiting for AI response)
 	parseIntentAndExecute(message, player)
 	
-	-- Generate AI conversational reply with action awareness
 	generateAiResponse(player, message)
 end
 
@@ -751,7 +687,6 @@ pcall(function()
 	end)
 end)
 
--- Rayfield UI Window Setup
 local Window = Rayfield:CreateWindow({
 	Name = "AI Character Mimic | Natural Intent & Dance",
 	LoadingTitle = "Connecting to Mistral AI...",
@@ -760,7 +695,6 @@ local Window = Rayfield:CreateWindow({
 	KeySystem = false,
 })
 
--- TAB 1: Personas & Speech
 local Tab1 = Window:CreateTab("Personas & Speech", 4483345998)
 Tab1:CreateSection("Select Active Persona")
 
@@ -807,7 +741,6 @@ Tab1:CreateButton({
 	end,
 })
 
--- TAB 2: YouTube Music DJ & Player
 local TabMusic = Window:CreateTab("Roblox DJ & Music", 4483345998)
 TabMusic:CreateSection("Live YouTube Music Browser Controller")
 
@@ -843,7 +776,6 @@ TabMusic:CreateButton({
 	end,
 })
 
--- TAB 3: System Tips Broadcaster
 local TabTips = Window:CreateTab("System Tips", 4483345998)
 TabTips:CreateSection("Periodic Chat System Tips")
 
@@ -870,7 +802,6 @@ TabTips:CreateButton({
 	end,
 })
 
--- TAB 4: Premium Auto Any Character
 local Tab2 = Window:CreateTab("Premium Auto Any Character", 4483345998)
 Tab2:CreateSection("Unlock Custom Character Creator")
 
@@ -906,7 +837,6 @@ Tab2:CreateButton({
 	end,
 })
 
--- TAB 5: Auto-Chat & Memory
 local Tab3 = Window:CreateTab("Auto-Chat & Memory", 4483345998)
 Tab3:CreateSection("AI Controls")
 
@@ -941,7 +871,6 @@ Tab3:CreateSlider({
 	Callback = function(Value) chatRadius = Value end,
 })
 
--- TAB 6: Bridge & Audio Info
 local Tab4 = Window:CreateTab("VC Bridge & Audio", 4483345998)
 Tab4:CreateSection("Browser Audio Streaming & Controls")
 

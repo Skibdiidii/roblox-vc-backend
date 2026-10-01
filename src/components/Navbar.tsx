@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import {
-  Activity,
-  Mic,
-  Disc,
   Users,
   Radio,
-  Volume2,
-  Cpu,
+  Disc,
+  Mic,
+  Sparkles,
   Menu,
   X
 } from 'lucide-react';
@@ -19,6 +17,7 @@ interface NavbarProps {
   serverOnline: boolean;
   activeRequestsCount: number;
   uptimeSeconds: number;
+  onOpenWhatsNew: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -26,7 +25,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActiveTab,
   serverOnline,
   activeRequestsCount,
-  uptimeSeconds
+  uptimeSeconds,
+  onOpenWhatsNew
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -50,7 +50,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className="bg-zinc-950 border-b border-zinc-800/80 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Brand Identity */}
           <div className="flex items-center space-x-3">
             <div className="w-9 h-9 rounded-lg bg-zinc-900 border border-zinc-700 flex items-center justify-center text-zinc-100 font-mono font-bold text-sm tracking-wider shadow-inner">
               VC
@@ -61,7 +60,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   Roblox VC Studio
                 </h1>
                 <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700 hidden sm:inline">
-                  v3.4
+                  v3.2
                 </span>
               </div>
               <p className="text-[11px] text-zinc-400 font-mono">
@@ -70,7 +69,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </div>
 
-          {/* Desktop Navigation Controls */}
           <nav className="hidden md:flex items-center space-x-1 bg-zinc-900/90 p-1 rounded-lg border border-zinc-800">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -103,8 +101,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             })}
           </nav>
 
-          {/* Server Telemetry Badge & Mobile Menu Button */}
           <div className="flex items-center space-x-3">
+            <button
+              onClick={onOpenWhatsNew}
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-lg text-xs font-semibold transition-all cursor-pointer shadow-sm"
+              title="View What's New & Updates"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-indigo-400 animate-pulse" />
+              <span className="hidden sm:inline">What's New</span>
+            </button>
+
             <div className="hidden sm:flex items-center space-x-2 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-xs font-mono">
               <span
                 className={`w-2 h-2 rounded-full ${
@@ -131,7 +137,6 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* Mobile Dropdown Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-zinc-950 border-b border-zinc-800 px-4 py-3 space-y-2 animate-in slide-in-from-top duration-150">
           <div className="flex items-center justify-between pb-2 border-b border-zinc-900 text-xs font-mono">
@@ -170,10 +175,25 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               );
             })}
+
+            <button
+              onClick={() => {
+                onOpenWhatsNew();
+                setMobileMenuOpen(false);
+              }}
+              className="flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-mono font-medium transition-all min-h-[44px] bg-indigo-950/40 text-indigo-300 border border-indigo-800/60 mt-1"
+            >
+              <div className="flex items-center space-x-3">
+                <Sparkles className="w-4 h-4 text-indigo-400" />
+                <span>What's New & Updates</span>
+              </div>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-indigo-900 text-indigo-200 border border-indigo-700">
+                v3.2
+              </span>
+            </button>
           </div>
         </div>
       )}
     </header>
   );
 };
-
